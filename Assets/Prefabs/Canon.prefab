@@ -44,3 +44,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bulletPrefab: {fileID: 6839792807400146039, guid: 62f028a7591a7b445812705185a70294, type: 3}
+  delayTime: 3
