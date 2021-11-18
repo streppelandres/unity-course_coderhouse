@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float speed = 15f;
-    [SerializeField] private GameObject projectile;
+    [SerializeField] private GameObject bulletPrefab;
     // private float rotationX = -90f;
     // private AudioSource footSteps;
 
@@ -27,8 +27,8 @@ public class PlayerController : MonoBehaviour
     private void Shoot() {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            GameObject bullet = Instantiate(projectile, transform.position, Quaternion.identity) as GameObject;
-            bullet.GetComponent<Rigidbody>().AddForce(transform.forward * 10);
+            GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity) as GameObject;
+            bullet.GetComponent<Rigidbody>().AddForce(transform.TransformDirection(Vector3.forward) * 20f, ForceMode.Impulse);
         }
     }
 
