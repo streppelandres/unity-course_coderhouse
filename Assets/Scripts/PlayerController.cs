@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,25 +7,54 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float speed = 15f;
     [SerializeField] private GameObject bulletPrefab;
-    // private float rotationX = -90f;
-    // private AudioSource footSteps;
+    private bool isHoldingRightClick = false;
 
-    void Start() {
-        // this.footSteps  = this.gameObject.GetComponent<AudioSource>();
+    void Start()
+    {
+
     }
 
-    void Update() {
+    void Update()
+    {
+        CheckIsHoldingRightClick();
+
+        if (isHoldingRightClick)
+        {
+            Shoot();
+        }
+
+    }
+
+    private void FixedUpdate()
+    {
         Move();
-        // PlaySteepsSound();
-        // Rotate();
-        Shoot();
+
+        if (isHoldingRightClick)
+        {
+            RotateUsingRaycast();
+        }
+
     }
 
-    private void Move() {
-        transform.Translate(new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")) * speed * Time.deltaTime);
+    private void CheckIsHoldingRightClick()
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            isHoldingRightClick = true;
+        }
+        else if (Input.GetMouseButtonUp(1))
+        {
+            isHoldingRightClick = false;
+        }
     }
 
-    private void Shoot() {
+    private void Move()
+    {
+        transform.Translate(new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical")) * speed * Time.deltaTime);
+    }
+
+    private void Shoot()
+    {
         if (Input.GetKeyDown(KeyCode.Space))
         {
             GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity) as GameObject;
@@ -32,13 +62,17 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    /*private void PlaySteepsSound() {
-        if (!this.footSteps.isPlaying && (Input.GetButton("Horizontal") || Input.GetButton("Vertical"))) {
-            footSteps.Play();
+    // Código de iKabyLake30: http://answers.unity.com/answers/1699638/view.html
+    private void RotateUsingRaycast()
+    {
+        Ray cameraRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
+        float rayLength;
+        if (groundPlane.Raycast(cameraRay, out rayLength))
+        {
+            Vector3 pointToLook = cameraRay.GetPoint(rayLength);
+            Debug.DrawLine(cameraRay.origin, pointToLook, Color.cyan);
+            transform.LookAt(new Vector3(pointToLook.x, transform.position.y, pointToLook.z));
         }
-    }*/
-
-    /*private void Rotate() {
-        transform.localRotation = Quaternion.Euler(0, (rotationX += Input.GetAxis("Mouse X")), 0);
-    }*/
+    }
 }
