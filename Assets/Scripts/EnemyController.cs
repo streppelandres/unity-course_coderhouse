@@ -21,30 +21,13 @@ public class EnemyController : MonoBehaviour
     private static readonly float DistanceRay = 30f;
     private static readonly Color PasiveColor = Color.yellow;
     private static readonly Color AgresiveColor = Color.red;
-    private static readonly float DespawnTimeAfterBeenDestroyed = 5f;
-
-    // TODO: Todo lo de la explosión estaría bueno que este en un utils a parte
-    #region Cube explosion variables
-    private static readonly float CubeSize = 0.2f;
-    private static readonly int CubesInRow = 5;
-    private Vector3 cubesPivot;
-    private static readonly float ExplosionForce = 50f;
-    private static readonly float ExplosionRadius = 4f;
-    private static readonly float ExplosionUpward = 0.4f;
     private bool hasExploded = false;
-    #endregion
 
     // Start is called before the first frame update
     void Start()
     {
         playerTransform = GameObject.Find("Player").transform;
         SetMaterialColor(enemyType == EnemyType.Pasivo ? Color.blue : AgresiveColor);
-
-        // Calculate pivot distance
-        float cubesPivotDistance = CubeSize * CubesInRow / 2;
-        // Use this value to create pivot vector)
-        cubesPivot = new Vector3(cubesPivotDistance, cubesPivotDistance, cubesPivotDistance);
-
     }
 
     // Update is called once per frame
@@ -114,70 +97,8 @@ public class EnemyController : MonoBehaviour
         }
         else if (name.StartsWith("Bullet")) {
             GameManager.instance.AddScore();
-            Explode();
+            hasExploded = CubeExplosionHandler.Explode(gameObject);
         }
     }
-
-    #region Cube explosion methods
-    private void Explode()
-    {
-        hasExploded = true;
-
-        // Disable components
-        GetComponent<MeshRenderer>().enabled = false;
-        GetComponent<BoxCollider>().enabled = false;
-        GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
-
-        // Loop 3 times to create 5x5x5 pieces in x,y,z coordinates
-        for (int x = 0; x < CubesInRow; x++)
-        {
-            for (int y = 0; y < CubesInRow; y++)
-            {
-                for (int z = 0; z < CubesInRow; z++)
-                {
-                    CreatePiece(x, y, z);
-                }
-            }
-        }
-
-        // Get explosion position
-        Vector3 explosionPos = transform.position;
-        // Get colliders in that position and radius
-        Collider[] colliders = Physics.OverlapSphere(explosionPos, ExplosionRadius);
-        // Add explosion force to all colliders in that overlap sphere
-        foreach (Collider hit in colliders)
-        {
-            // Get rigidbody from collider object
-            Rigidbody rb = hit.GetComponent<Rigidbody>();
-            if (rb != null)
-            {
-                // Add explosion force to this body with given parameters
-                rb.AddExplosionForce(ExplosionForce, transform.position, ExplosionRadius, ExplosionUpward);
-            }
-        }
-
-        // Destroy enemy
-        Destroy(this.gameObject, DespawnTimeAfterBeenDestroyed);
-    }
-
-    private void CreatePiece(int x, int y, int z)
-    {
-        // Create piece
-        GameObject piece = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        // Make child piece's
-        piece.transform.parent = transform;
-
-        // Set piece position and scale
-        piece.transform.position = transform.position + new Vector3(CubeSize * x, CubeSize * y, CubeSize * z) - cubesPivot;
-        piece.transform.localScale = new Vector3(CubeSize, CubeSize, CubeSize);
-
-        // Add color
-        piece.GetComponent<Renderer>().material.SetColor("_Color", GetMaterialColor());
-
-        // Add rigidbody and set mass
-        piece.AddComponent<Rigidbody>();
-        piece.GetComponent<Rigidbody>().mass = CubeSize;
-    }
-    #endregion
 
 }
