@@ -7,9 +7,6 @@ using UnityEngine;
  *  Tipos de enemigos:
  *  - Pasio: Merondea por ahi, si ve al player cambia a color amarillo, lo va perseguir y aumentar su velocidad
  *  - Agresivo: Ni bien aparece va ir detras del jugador
- *  
- *  Logica de explosion al ser impactado es de: https://youtu.be/s_v9JnTDCCY
- *  Le hice ligeros cambios como el color, que los pedazos sean objeto child y que despawneen en "X" tiempo
  */
 public class EnemyController : MonoBehaviour
 {
@@ -33,21 +30,23 @@ public class EnemyController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!hasExploded) {
+        if (!hasExploded)
+        {
             bool isPasiveColor = GetMaterialColor() == PasiveColor;
 
             if (enemyType == EnemyType.Pasivo)
             {
                 // TODO: Movimiento por default, que vaya yendo y viniendo
                 OnRaycastHitFollowPlayer();
-                OnRaycastHitFollowPlayer();
 
-                if (isPasiveColor) {
+                if (isPasiveColor)
+                {
                     this.speed += Time.deltaTime;
                 }
             }
 
-            if (enemyType == EnemyType.Agresivo || isPasiveColor) {
+            if (enemyType == EnemyType.Agresivo || isPasiveColor)
+            {
                 FollowPlayer();
                 LookAtPlayerLerp();
             }
@@ -64,30 +63,37 @@ public class EnemyController : MonoBehaviour
         transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(playerTransform.position - transform.position), 5f * Time.deltaTime);
     }
 
-    private void SetMaterialColor(Color newColor) {
+    private void SetMaterialColor(Color newColor)
+    {
         this.GetComponent<Renderer>().material.SetColor("_Color", newColor);
     }
 
-    private Color GetMaterialColor() {
+    private Color GetMaterialColor()
+    {
         return this.GetComponent<Renderer>().material.GetColor("_Color");
     }
 
-    private void OnRaycastHitFollowPlayer() {
+    private void OnRaycastHitFollowPlayer()
+    {
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, DistanceRay)) {
-            if (hit.transform.tag == "Player") {
+        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, DistanceRay))
+        {
+            if (hit.transform.tag == "Player")
+            {
                 SetMaterialColor(Color.yellow);
             }
         }
     }
 
-    private void OnDrawGizmos() {
+    private void OnDrawGizmos()
+    {
         Gizmos.color = Color.blue;
         Vector3 direction = transform.TransformDirection(Vector3.forward) * DistanceRay;
         Gizmos.DrawRay(transform.position, direction);
     }
 
-    private void OnCollisionEnter(Collision other) {
+    private void OnCollisionEnter(Collision other)
+    {
         string name = other.gameObject.name;
 
         if (name == "Player")
@@ -95,7 +101,8 @@ public class EnemyController : MonoBehaviour
             GameManager.instance.RemoveScore();
             Destroy(this.gameObject);
         }
-        else if (name.StartsWith("Bullet")) {
+        else if (name.StartsWith("Bullet"))
+        {
             GameManager.instance.AddScore();
             hasExploded = CubeExplosionHandler.Explode(gameObject);
         }

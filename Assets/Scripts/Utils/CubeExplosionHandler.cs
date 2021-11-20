@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/**
+ *  La lógica es sacada de: https://youtu.be/s_v9JnTDCCY
+ *  Le hice ligeros cambios como el color, que los pedazos sean objeto child y que despawneen en "X" tiempo
+ */
 public class CubeExplosionHandler
 {
     private static readonly float DespawnTimeAfterBeenDestroyed = 5f;
