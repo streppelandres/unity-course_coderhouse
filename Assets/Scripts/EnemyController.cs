@@ -18,32 +18,30 @@ public class EnemyController : MonoBehaviour
 
     [SerializeField] private EnemyType enemyType;
     [SerializeField] private float speed = 10f;
-    private float distanceRay = 30f;
-    private Color pasiveColor = Color.yellow;
-    private Color agresiveColor = Color.red;
+    private static readonly float DistanceRay = 30f;
+    private static readonly Color PasiveColor = Color.yellow;
+    private static readonly Color AgresiveColor = Color.red;
+    private static readonly float DespawnTimeAfterBeenDestroyed = 5f;
 
     // TODO: Todo lo de la explosión estaría bueno que este en un utils a parte
     #region Cube explosion variables
-    private float cubeSize = 0.2f;
-    private int cubesInRow = 5;
-    private float cubesPivotDistance;
+    private static readonly float CubeSize = 0.2f;
+    private static readonly int CubesInRow = 5;
     private Vector3 cubesPivot;
-    private float explosionForce = 50f;
-    private float explosionRadius = 4f;
-    private float explosionUpward = 0.4f;
+    private static readonly float ExplosionForce = 50f;
+    private static readonly float ExplosionRadius = 4f;
+    private static readonly float ExplosionUpward = 0.4f;
     private bool hasExploded = false;
-    private float explodedTimer = 0f;
-    private float explodedPiecesDespawnTime = 10f;
     #endregion
 
     // Start is called before the first frame update
     void Start()
     {
         playerTransform = GameObject.Find("Player").transform;
-        SetMaterialColor(enemyType == EnemyType.Pasivo ? Color.blue : agresiveColor);
+        SetMaterialColor(enemyType == EnemyType.Pasivo ? Color.blue : AgresiveColor);
 
         // Calculate pivot distance
-        cubesPivotDistance = cubeSize * cubesInRow / 2;
+        float cubesPivotDistance = CubeSize * CubesInRow / 2;
         // Use this value to create pivot vector)
         cubesPivot = new Vector3(cubesPivotDistance, cubesPivotDistance, cubesPivotDistance);
 
@@ -53,11 +51,12 @@ public class EnemyController : MonoBehaviour
     void Update()
     {
         if (!hasExploded) {
-            bool isPasiveColor = GetMaterialColor() == pasiveColor;
+            bool isPasiveColor = GetMaterialColor() == PasiveColor;
 
             if (enemyType == EnemyType.Pasivo)
             {
                 // TODO: Movimiento por default, que vaya yendo y viniendo
+                OnRaycastHitFollowPlayer();
                 OnRaycastHitFollowPlayer();
 
                 if (isPasiveColor) {
@@ -69,8 +68,6 @@ public class EnemyController : MonoBehaviour
                 FollowPlayer();
                 LookAtPlayerLerp();
             }
-
-            ExplodeTimerHandler();
         }
     }
 
@@ -94,7 +91,7 @@ public class EnemyController : MonoBehaviour
 
     private void OnRaycastHitFollowPlayer() {
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, distanceRay)) {
+        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, DistanceRay)) {
             if (hit.transform.tag == "Player") {
                 SetMaterialColor(Color.yellow);
             }
@@ -103,7 +100,7 @@ public class EnemyController : MonoBehaviour
 
     private void OnDrawGizmos() {
         Gizmos.color = Color.blue;
-        Vector3 direction = transform.TransformDirection(Vector3.forward) * distanceRay;
+        Vector3 direction = transform.TransformDirection(Vector3.forward) * DistanceRay;
         Gizmos.DrawRay(transform.position, direction);
     }
 
@@ -122,18 +119,8 @@ public class EnemyController : MonoBehaviour
     }
 
     #region Cube explosion methods
-    private void ExplodeTimerHandler() {
-        if (hasExploded) {
-            explodedTimer += Time.deltaTime;
-            if (explodedTimer > explodedPiecesDespawnTime) {
-                Destroy(this.gameObject);
-            }
-        }
-    }
-
     private void Explode()
     {
-        // Make object disappear
         hasExploded = true;
 
         // Disable components
@@ -142,11 +129,11 @@ public class EnemyController : MonoBehaviour
         GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
 
         // Loop 3 times to create 5x5x5 pieces in x,y,z coordinates
-        for (int x = 0; x < cubesInRow; x++)
+        for (int x = 0; x < CubesInRow; x++)
         {
-            for (int y = 0; y < cubesInRow; y++)
+            for (int y = 0; y < CubesInRow; y++)
             {
-                for (int z = 0; z < cubesInRow; z++)
+                for (int z = 0; z < CubesInRow; z++)
                 {
                     CreatePiece(x, y, z);
                 }
@@ -156,7 +143,7 @@ public class EnemyController : MonoBehaviour
         // Get explosion position
         Vector3 explosionPos = transform.position;
         // Get colliders in that position and radius
-        Collider[] colliders = Physics.OverlapSphere(explosionPos, explosionRadius);
+        Collider[] colliders = Physics.OverlapSphere(explosionPos, ExplosionRadius);
         // Add explosion force to all colliders in that overlap sphere
         foreach (Collider hit in colliders)
         {
@@ -165,9 +152,12 @@ public class EnemyController : MonoBehaviour
             if (rb != null)
             {
                 // Add explosion force to this body with given parameters
-                rb.AddExplosionForce(explosionForce, transform.position, explosionRadius, explosionUpward);
+                rb.AddExplosionForce(ExplosionForce, transform.position, ExplosionRadius, ExplosionUpward);
             }
         }
+
+        // Destroy enemy
+        Destroy(this.gameObject, DespawnTimeAfterBeenDestroyed);
     }
 
     private void CreatePiece(int x, int y, int z)
@@ -178,15 +168,15 @@ public class EnemyController : MonoBehaviour
         piece.transform.parent = transform;
 
         // Set piece position and scale
-        piece.transform.position = transform.position + new Vector3(cubeSize * x, cubeSize * y, cubeSize * z) - cubesPivot;
-        piece.transform.localScale = new Vector3(cubeSize, cubeSize, cubeSize);
+        piece.transform.position = transform.position + new Vector3(CubeSize * x, CubeSize * y, CubeSize * z) - cubesPivot;
+        piece.transform.localScale = new Vector3(CubeSize, CubeSize, CubeSize);
 
         // Add color
         piece.GetComponent<Renderer>().material.SetColor("_Color", GetMaterialColor());
 
         // Add rigidbody and set mass
         piece.AddComponent<Rigidbody>();
-        piece.GetComponent<Rigidbody>().mass = cubeSize;
+        piece.GetComponent<Rigidbody>().mass = CubeSize;
     }
     #endregion
 
