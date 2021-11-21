@@ -41,10 +41,12 @@ public class PlayerController : MonoBehaviour
         if (Input.GetMouseButtonDown(1))
         {
             isHoldingRightClick = true;
+            CursorManager.SetCursor(CursorManager.CursorType.Aiming);
         }
         else if (Input.GetMouseButtonUp(1))
         {
             isHoldingRightClick = false;
+            CursorManager.SetCursor(CursorManager.CursorType.Default);
         }
     }
 
