@@ -5,7 +5,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private float speed = 15f;
+    [SerializeField] private float movementSpeed = 15f;
+    [SerializeField] private float rotationSpeed = 720f;
     [SerializeField] private GameObject bulletPrefab;
     private bool isHoldingRightClick = false;
 
@@ -17,23 +18,13 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         CheckIsHoldingRightClick();
-
-        if (isHoldingRightClick)
-        {
-            Shoot();
-        }
-
+        if (isHoldingRightClick) Shoot();
     }
 
     private void FixedUpdate()
     {
         Move();
-
-        if (isHoldingRightClick)
-        {
-            RotateUsingRaycast();
-        }
-
+        if (isHoldingRightClick) RotateUsingRaycast();
     }
 
     private void CheckIsHoldingRightClick()
@@ -52,19 +43,36 @@ public class PlayerController : MonoBehaviour
 
     private void Move()
     {
-        transform.Translate(new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical")) * speed * Time.deltaTime);
+        Vector3 movementDirection = new Vector3(Input.GetAxis("Horizontal"), 0f, Input.GetAxis("Vertical"));
+
+        if (isHoldingRightClick)
+        {
+            transform.Translate(movementDirection * movementSpeed * Time.deltaTime);
+        }
+        else
+        {
+            // Movimiento del personaje con rotación de Ketra Games: https://youtu.be/BJzYGsMcy8Q
+            movementDirection.Normalize();
+            transform.Translate(movementDirection * movementSpeed * Time.deltaTime, Space.World);
+
+            if (movementDirection != Vector3.zero) 
+            {
+                Quaternion toRotation = Quaternion.LookRotation(movementDirection, Vector3.up);
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, toRotation, rotationSpeed * Time.deltaTime);
+            }
+        }
     }
 
     private void Shoot()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetMouseButtonDown(0))
         {
             GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity) as GameObject;
             bullet.GetComponent<Rigidbody>().AddForce(transform.TransformDirection(Vector3.forward) * 20f, ForceMode.Impulse);
         }
     }
 
-    // Código de iKabyLake30: http://answers.unity.com/answers/1699638/view.html
+    // Rotación en base al mouse de iKabyLake30: http://answers.unity.com/answers/1699638/view.html
     private void RotateUsingRaycast()
     {
         Ray cameraRay = Camera.main.ScreenPointToRay(Input.mousePosition);
