@@ -318,7 +318,6 @@ GameObject:
   m_Component:
   - component: {fileID: 752162688}
   - component: {fileID: 752162691}
-  - component: {fileID: 752162690}
   - component: {fileID: 752162689}
   m_Layer: 0
   m_Name: cm
@@ -363,33 +362,6 @@ MonoBehaviour:
   m_YawDamping: 0
   m_RollDamping: 0
   m_AngularDamping: 0
---- !u!114 &752162690
-MonoBehaviour:
-  m_ObjectHideFlags: 3
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 752162687}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4044717213e31446939f7bd49c896ea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_TrackedObjectOffset: {x: 0, y: 0, z: 0}
-  m_LookaheadTime: 0
-  m_LookaheadSmoothing: 0
-  m_LookaheadIgnoreY: 0
-  m_HorizontalDamping: 0.5
-  m_VerticalDamping: 0.5
-  m_ScreenX: 0.5
-  m_ScreenY: 0.5
-  m_DeadZoneWidth: 0
-  m_DeadZoneHeight: 0
-  m_SoftZoneWidth: 0.8
-  m_SoftZoneHeight: 0.8
-  m_BiasX: 0
-  m_BiasY: 0
-  m_CenterOnActivate: 1
 --- !u!114 &752162691
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -527,7 +499,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3be8ac5e63aaa9349acf17f26ae27a1e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
+  movementSpeed: 5
   bulletPrefab: {fileID: 8275895296745453612, guid: 46c81eab9b6ce6c439b4fed6b60b7978, type: 3}
 --- !u!1 &963194225
 GameObject:
@@ -581,7 +553,7 @@ Camera:
     height: 1
   near clip plane: 1
   far clip plane: 2000
-  field of view: 80
+  field of view: 90
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -733,6 +705,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1280134534}
   - component: {fileID: 1280134533}
+  - component: {fileID: 1280134535}
   m_Layer: 0
   m_Name: Player camera
   m_TagString: Untagged
@@ -790,6 +763,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1280134535
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1280134532}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4700f9f03ad19f94baf0367cb7a9c988, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Width: 10
+  m_Damping: 6.7
+  m_MinFOV: 80
+  m_MaxFOV: 90
 --- !u!1 &1778593740
 GameObject:
   m_ObjectHideFlags: 0

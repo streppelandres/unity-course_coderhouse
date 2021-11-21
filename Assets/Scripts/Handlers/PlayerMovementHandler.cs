@@ -18,6 +18,7 @@ public class PlayerMovementHandler
         else
         {
             DefaultMovement(transform, movementDirection, movementSpeed);
+            DefaultRotation(transform, movementDirection);
         }
     }
 
@@ -45,7 +46,11 @@ public class PlayerMovementHandler
     {
         movementDirection.Normalize();
         transform.Translate(movementDirection * movementSpeed * Time.deltaTime, Space.World);
+    }
 
+    private static void DefaultRotation(Transform transform, Vector3 movementDirection)
+    {
+        movementDirection.Normalize();
         if (movementDirection != Vector3.zero)
         {
             Quaternion toRotation = Quaternion.LookRotation(movementDirection, Vector3.up);
