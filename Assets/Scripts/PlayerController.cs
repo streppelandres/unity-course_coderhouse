@@ -6,18 +6,18 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float movementSpeed = 5f;
-    [SerializeField] private GameObject bulletPrefab;
     private bool isAiming = false;
+    private WeaponController weaponController;
 
-    void Start()
+    private void Awake()
     {
-
+        weaponController = transform.Find("WeaponSpot").gameObject.GetComponent<WeaponController>();
     }
 
     void Update()
     {
-        CheckIsHoldingRightClick();
-        if (isAiming) CanShoot();
+        CheckIfPlayerIsAiming();
+        if (isAiming && Input.GetMouseButtonDown(0)) weaponController.ShootHandler();
     }
 
     private void FixedUpdate()
@@ -25,26 +25,17 @@ public class PlayerController : MonoBehaviour
         PlayerMovementHandler.MainMovementHanlder(transform, movementSpeed, isAiming);
     }
 
-    private void CheckIsHoldingRightClick()
+    private void CheckIfPlayerIsAiming()
     {
         if (Input.GetMouseButtonDown(1))
         {
             isAiming = true;
-            CursorManager.SetCursor(CursorManager.CursorType.Aiming);
         }
         else if (Input.GetMouseButtonUp(1))
         {
             isAiming = false;
-            CursorManager.SetCursor(CursorManager.CursorType.Default);
         }
-    }
 
-    private void CanShoot()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            GameObject bullet = Instantiate(bulletPrefab, transform.position, Quaternion.identity) as GameObject;
-            bullet.GetComponent<Rigidbody>().AddForce(transform.TransformDirection(Vector3.forward) * 20f, ForceMode.Impulse);
-        }
+        CursorManager.SetCursor(isAiming ? CursorManager.CursorType.Aiming : CursorManager.CursorType.Default);
     }
 }
