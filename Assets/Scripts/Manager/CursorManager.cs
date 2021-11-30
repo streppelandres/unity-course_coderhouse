@@ -17,10 +17,10 @@ public class CursorManager : MonoBehaviour
             { CursorType.Aiming, aimingCursorTexture }
         };
 
-        // SetCursor(CursorType.Default);
+        SetCursor(CursorType.Default);
     }
 
     public static void SetCursor(CursorType type) {
-        // Cursor.SetCursor(cursorTextureDictionary[type], new Vector2(0f, 0f), CursorMode.Auto);
+        Cursor.SetCursor(cursorTextureDictionary[type], new Vector2(0f, 0f), CursorMode.Auto);
     }
 }
