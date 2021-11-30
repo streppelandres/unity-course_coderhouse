@@ -20,6 +20,8 @@ public class EnemyController : MonoBehaviour
     private static readonly Color AgresiveColor = Color.red;
     private bool hasExploded = false;
 
+    [SerializeField] private GameObject scoreUi;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -104,6 +106,7 @@ public class EnemyController : MonoBehaviour
         else if (name.StartsWith("Bullet"))
         {
             GameManager.instance.AddScore();
+            scoreUi.GetComponent<ScoreController>().SetScore(GameManager.GetScore());
             hasExploded = CubeExplosionHandler.Explode(gameObject);
         }
     }

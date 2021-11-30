@@ -17,6 +17,9 @@ public class WeaponController : MonoBehaviour
     private WeaponSpecifics weaponSpecifics = null;
     private float timerCooldownPerShoot = 0f;
 
+    // TODO: Hacer algo estatico y por eventos
+    [SerializeField] private GameObject reloadBar;
+
     private void Awake()
     {
         // Esto podría ser mejor, quizás cada arma sea una clase a parte que herede de esta
@@ -31,15 +34,18 @@ public class WeaponController : MonoBehaviour
 
     private void Update()
     {
-        if(weaponSpecifics != null && timerCooldownPerShoot < weaponSpecifics.CooldownPerShootTime) timerCooldownPerShoot += Time.deltaTime;
+        if (weaponSpecifics != null && timerCooldownPerShoot < weaponSpecifics.CooldownPerShootTime) timerCooldownPerShoot += Time.deltaTime;
     }
 
     public void ShootHandler() {
         // Si todavia no lo tengo cargado, traigo las especificaciones del arma
         if (weaponSpecifics == null) weaponSpecifics = weaponSepecificationDictionary[weaponType];
 
+        reloadBar.GetComponent<ReloadController>().SetMax(weaponSpecifics.CooldownPerShootTime);
+
         if (firstTimeShooting || timerCooldownPerShoot > weaponSpecifics.CooldownPerShootTime)
         {
+            reloadBar.GetComponent<ReloadController>().ResetValue();
             InstantiateBullet();
             timerCooldownPerShoot = 0f;
             firstTimeShooting = false;
@@ -61,5 +67,6 @@ public class WeaponController : MonoBehaviour
         // Al cambiar de arma le cargo las especificaciones nuevas
         weaponSpecifics = weaponSepecificationDictionary[weaponType];
         firstTimeShooting = true;
+        reloadBar.GetComponent<ReloadController>().SetMax(weaponSpecifics.CooldownPerShootTime);
     }
 }
