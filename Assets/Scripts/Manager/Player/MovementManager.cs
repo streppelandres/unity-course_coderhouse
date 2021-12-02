@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMovementHandler
+public static class MovementManager
 {
     private static readonly float RotationSpeed = 720f;
 

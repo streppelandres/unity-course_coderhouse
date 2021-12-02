@@ -24,16 +24,16 @@ public class GameManager : MonoBehaviour
     public void AddScore()
     {
         instance.points += 1;
-        Debug.Log("Se agrego un punto al score -> [" + GameManager.GetScore() + "]");
+        Debug.Log("Se agrego un punto al score -> [" + instance.GetScore() + "]");
     }
 
     public void RemoveScore()
     {
         instance.points -= 1;
-        Debug.Log("Se quito un punto al score -> [" + GameManager.GetScore() + "]");
+        Debug.Log("Se quito un punto al score -> [" + instance.GetScore() + "]");
     }
 
-    public static int GetScore()
+    public int GetScore()
     {
         return instance.points;
     }

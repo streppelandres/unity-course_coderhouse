@@ -17,6 +17,6 @@ MonoBehaviour:
   cooldownPerShootTime: 1
   reloadTime: 3
   bulletsPerShoot: 3
-  damagePerShoot: 3
+  damagePerShoot: 15
   criticalChance: 30
   color: {r: 1, g: 0, b: 0, a: 0}

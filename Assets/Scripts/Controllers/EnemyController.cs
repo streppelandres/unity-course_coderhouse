@@ -2,18 +2,20 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-    [SerializeField] private GameObject scoreUi; // FIXME: Esto debería ser por un singleton
-    [SerializeField] protected Enemy enemyScripteable;
+    // [SerializeField] private GameObject scoreUi; // FIXME: Esto debería ser por un singleton
+    [SerializeField] private Enemy enemyScripteable;
 
     private Transform playerTransform;
     private bool hasExploded = false;
     private bool playerFound = false;
+    private float life = 0f;
 
     // Start is called before the first frame update
     void Start()
     {
         playerTransform = GameObject.Find("Player").transform;
         SetMaterialColor(enemyScripteable.Color);
+        life = enemyScripteable.MaxLife;
     }
 
     // Update is called once per frame
@@ -79,18 +81,18 @@ public class EnemyController : MonoBehaviour
         {
             // TODO: Fijate de hacer mejor esto:
             float damage = playerTransform.Find("WeaponSpot").GetComponent<WeaponController>().GunScripteable.DamagePerShoot;
-            enemyScripteable.Life -= damage;
-            Debug.Log($"El enemigo recibió [{damage}] puntos de daño, vida restante [{enemyScripteable.Life}]");
+            life -= damage;
+            Debug.Log($"El enemigo recibió [{damage}] puntos de daño, vida restante [{life}]");
 
-            if (enemyScripteable.Life <= 0) {
+            if (life <= 0) {
                 Debug.Log($"Enemigo sin vida, eliminado");
 
                 // Sumo al score
                 GameManager.instance.AddScore();
-                scoreUi.GetComponent<ScoreController>().SetScore(GameManager.GetScore());
+                ScoreUI.instance.SetScore(GameManager.instance.GetScore());
 
                 // Destruyo el object
-                hasExploded = CubeExplosionHandler.Explode(gameObject);
+                hasExploded = CubeExplosion.Explode(gameObject);
             }
         }
     }

@@ -15,8 +15,8 @@ public class ItemBoxController : MonoBehaviour
     private void OnCollisionEnter(Collision other)
     {
         if (other.gameObject.CompareTag("Player")) {
-            PlayerInventoryManager.AddItem(type);
-            CubeExplosionHandler.Explode(gameObject); // Hace una sobrecarga del metodo para pasarle mas config
+            InventoryManager.AddItem(type);
+            CubeExplosion.Explode(gameObject); // Hace una sobrecarga del metodo para pasarle mas config
         }
     }
 

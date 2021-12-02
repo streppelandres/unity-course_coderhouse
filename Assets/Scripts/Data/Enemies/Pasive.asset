@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Pasive
   m_EditorClassIdentifier: 
   enemyType: 1
-  speed: 1
-  life: 192.5
+  speed: 2
+  maxLife: 20
   color: {r: 0.9081682, g: 1, b: 0.4764151, a: 0}
   lookDistance: 30

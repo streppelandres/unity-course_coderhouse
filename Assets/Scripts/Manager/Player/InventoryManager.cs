@@ -1,9 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Text;
 
-public static class PlayerInventoryManager
+public static class InventoryManager
 {
     private static List<ItemBoxController.ItemType> itemsList = new List<ItemBoxController.ItemType>();
 

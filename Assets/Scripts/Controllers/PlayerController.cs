@@ -8,11 +8,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float movementSpeed = 5f;
     private bool isAiming = false;
     private WeaponController weaponController;
-    // public PlayerInventoryManager InventoryManager { get; private set; } // Es estatico no lo necesitas instanciar
 
     private void Awake()
     {
-        // InventoryManager = new PlayerInventoryManager(); // Es estatico no lo necesitas instanciar
         weaponController = transform.Find("WeaponSpot").gameObject.GetComponent<WeaponController>();
     }
 
@@ -20,12 +18,12 @@ public class PlayerController : MonoBehaviour
     {
         CheckIfPlayerIsAiming();
         if (isAiming && Input.GetMouseButtonDown(0)) weaponController.ShootHandler();
-        if (Input.GetKeyDown(KeyCode.E)) PlayerInventoryManager.UseItem();
+        if (Input.GetKeyDown(KeyCode.E)) InventoryManager.UseItem();
     }
 
     private void FixedUpdate()
     {
-        PlayerMovementHandler.MainMovementHanlder(transform, movementSpeed, isAiming);
+        MovementManager.MainMovementHanlder(transform, movementSpeed, isAiming);
     }
 
     private void CheckIfPlayerIsAiming()
