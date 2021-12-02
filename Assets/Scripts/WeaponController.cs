@@ -5,6 +5,8 @@ using UnityEngine;
 public class WeaponController : MonoBehaviour
 {
     [SerializeField] private Gun gunScripteable;
+    public Gun GunScripteable { get => gunScripteable; }
+
     [SerializeField] private GameObject bulletPrefab;
     // TODO: Hacer algo estatico y por eventos
     [SerializeField] private GameObject reloadBar;

@@ -1925,6 +1925,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 876622866}
     - target: {fileID: 6395772845461429527, guid: b485ff4e3e856d34ab71322d925dc59b, type: 3}
+      propertyPath: enemyData
+      value: 
+      objectReference: {fileID: 11400000, guid: f91ac50a1e7eb9f4cac653aee461f990, type: 2}
+    - target: {fileID: 6395772845461429527, guid: b485ff4e3e856d34ab71322d925dc59b, type: 3}
       propertyPath: enemyScripteable
       value: 
       objectReference: {fileID: 11400000, guid: f91ac50a1e7eb9f4cac653aee461f990, type: 2}
@@ -2046,6 +2050,10 @@ PrefabInstance:
       propertyPath: scoreUi
       value: 
       objectReference: {fileID: 876622866}
+    - target: {fileID: 6395772845461429527, guid: b485ff4e3e856d34ab71322d925dc59b, type: 3}
+      propertyPath: enemyData
+      value: 
+      objectReference: {fileID: 11400000, guid: 75f533d24a79c2e47bfda2b2a3ebfc73, type: 2}
     - target: {fileID: 6395772845461429529, guid: b485ff4e3e856d34ab71322d925dc59b, type: 3}
       propertyPath: m_RootOrder
       value: 1

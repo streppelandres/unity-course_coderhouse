@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Agresive
   m_EditorClassIdentifier: 
   enemyType: 0
-  speed: 10
-  life: 100
+  speed: 3
+  life: 41.5
   color: {r: 1, g: 0.08018869, b: 0.08018869, a: 0}
   lookDistance: 30

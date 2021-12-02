@@ -3,7 +3,7 @@ using UnityEngine;
 public class EnemyController : MonoBehaviour
 {
     [SerializeField] private GameObject scoreUi; // FIXME: Esto debería ser por un singleton
-    [SerializeField] private Enemy enemyScripteable;
+    [SerializeField] protected Enemy enemyScripteable;
 
     private Transform playerTransform;
     private bool hasExploded = false;
@@ -77,9 +77,21 @@ public class EnemyController : MonoBehaviour
         }
         else if (name.StartsWith("Bullet"))
         {
-            GameManager.instance.AddScore();
-            scoreUi.GetComponent<ScoreController>().SetScore(GameManager.GetScore());
-            hasExploded = CubeExplosionHandler.Explode(gameObject);
+            // TODO: Fijate de hacer mejor esto:
+            float damage = playerTransform.Find("WeaponSpot").GetComponent<WeaponController>().GunScripteable.DamagePerShoot;
+            enemyScripteable.Life -= damage;
+            Debug.Log($"El enemigo recibió [{damage}] puntos de daño, vida restante [{enemyScripteable.Life}]");
+
+            if (enemyScripteable.Life <= 0) {
+                Debug.Log($"Enemigo sin vida, eliminado");
+
+                // Sumo al score
+                GameManager.instance.AddScore();
+                scoreUi.GetComponent<ScoreController>().SetScore(GameManager.GetScore());
+
+                // Destruyo el object
+                hasExploded = CubeExplosionHandler.Explode(gameObject);
+            }
         }
     }
 
