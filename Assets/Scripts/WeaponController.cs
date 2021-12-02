@@ -4,46 +4,35 @@ using UnityEngine;
 
 public class WeaponController : MonoBehaviour
 {
+    [SerializeField] private Gun gunScripteable;
     [SerializeField] private GameObject bulletPrefab;
-    public enum WeaponType { Pistol, Shotgun, Submachine };
-    private Transform shootOrigenTransform;
-
-    // La logica la podes hacer en torno a que si agarras otra arma, lo unico que vas hacer es cambiar este tipo
-    // De ahi podes hacer un metodo en el collider, que cambie este tipo y el modelo del arma
-    [SerializeField] private WeaponType weaponType;
-    private static Dictionary<WeaponType, WeaponSpecifics> weaponSepecificationDictionary;
-
-    private bool firstTimeShooting = true; // Busca otra forma de no tener que hacer una flag asi
-    private WeaponSpecifics weaponSpecifics = null;
-    private float timerCooldownPerShoot = 0f;
-
     // TODO: Hacer algo estatico y por eventos
     [SerializeField] private GameObject reloadBar;
 
+    private Transform shootOrigenTransform;
+    private bool firstTimeShooting = true; // Busca otra forma de no tener que hacer una flag asi
+    private float timerCooldownPerShoot = 0f;
+
     private void Awake()
     {
-        // Esto podría ser mejor, quizás cada arma sea una clase a parte que herede de esta
-        weaponSepecificationDictionary = new Dictionary<WeaponType, WeaponSpecifics> {
-            { WeaponType.Pistol, new WeaponSpecifics(15, 1f, 2.5f, 1.5f) },
-            { WeaponType.Shotgun, new WeaponSpecifics(6, 2.5f, 4f, 10f) },
-            { WeaponType.Submachine, new WeaponSpecifics(30, 0.5f, 3f, 1f) }
-        };
-
         shootOrigenTransform = transform.Find("ShootOrigin");
+        ChangeGunColor(gunScripteable.Color);
+    }
+
+    private void Start()
+    {
+        // 
     }
 
     private void Update()
     {
-        if (weaponSpecifics != null && timerCooldownPerShoot < weaponSpecifics.CooldownPerShootTime) timerCooldownPerShoot += Time.deltaTime;
+        if (timerCooldownPerShoot < gunScripteable.CooldownPerShootTime) timerCooldownPerShoot += Time.deltaTime;
     }
 
     public void ShootHandler() {
-        // Si todavia no lo tengo cargado, traigo las especificaciones del arma
-        if (weaponSpecifics == null) weaponSpecifics = weaponSepecificationDictionary[weaponType];
+        reloadBar.GetComponent<ReloadController>().SetMax(gunScripteable.CooldownPerShootTime);
 
-        reloadBar.GetComponent<ReloadController>().SetMax(weaponSpecifics.CooldownPerShootTime);
-
-        if (firstTimeShooting || timerCooldownPerShoot > weaponSpecifics.CooldownPerShootTime)
+        if (firstTimeShooting || timerCooldownPerShoot > gunScripteable.CooldownPerShootTime)
         {
             reloadBar.GetComponent<ReloadController>().ResetValue();
             InstantiateBullet();
@@ -51,7 +40,7 @@ public class WeaponController : MonoBehaviour
             firstTimeShooting = false;
         }
         else {
-            Debug.Log($"No se pudo disparar. Weapon Cooldown [{weaponSpecifics.CooldownPerShootTime}], timerShoot: [{timerCooldownPerShoot}]");
+            Debug.Log($"No se pudo disparar. Weapon Cooldown [{gunScripteable.CooldownPerShootTime}], timerShoot: [{timerCooldownPerShoot}]");
         }
     }
 
@@ -61,12 +50,15 @@ public class WeaponController : MonoBehaviour
         Destroy(bullet, 5f);
     }
 
-    public void ChangeWeaponType(WeaponType newWeaponType)
+    public void ChangeWeaponType(Gun newGunScripteable)
     {
-        weaponType = newWeaponType;
-        // Al cambiar de arma le cargo las especificaciones nuevas
-        weaponSpecifics = weaponSepecificationDictionary[weaponType];
+        gunScripteable = newGunScripteable;
         firstTimeShooting = true;
-        reloadBar.GetComponent<ReloadController>().SetMax(weaponSpecifics.CooldownPerShootTime);
+        reloadBar.GetComponent<ReloadController>().SetMax(gunScripteable.CooldownPerShootTime);
+        ChangeGunColor(gunScripteable.Color);
+    }
+
+    private void ChangeGunColor(Color newColor) {
+        transform.Find("Model").transform.Find("Gun").GetComponent<Renderer>().material.SetColor("_Color", newColor);
     }
 }

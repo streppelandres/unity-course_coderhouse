@@ -1,32 +1,19 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-/**
- *
- *  Tipos de enemigos:
- *  - Pasio: Merondea por ahi, si ve al player cambia a color amarillo, lo va perseguir y aumentar su velocidad
- *  - Agresivo: Ni bien aparece va ir detras del jugador
- */
 public class EnemyController : MonoBehaviour
 {
-    private enum EnemyType { Pasivo, Agresivo };
+    [SerializeField] private GameObject scoreUi; // FIXME: Esto debería ser por un singleton
+    [SerializeField] private Enemy enemyScripteable;
+
     private Transform playerTransform;
-
-    [SerializeField] private EnemyType enemyType;
-    [SerializeField] private float speed = 10f;
-    private static readonly float DistanceRay = 30f;
-    private static readonly Color PasiveColor = Color.yellow;
-    private static readonly Color AgresiveColor = Color.red;
     private bool hasExploded = false;
-
-    [SerializeField] private GameObject scoreUi;
+    private bool playerFound = false;
 
     // Start is called before the first frame update
     void Start()
     {
         playerTransform = GameObject.Find("Player").transform;
-        SetMaterialColor(enemyType == EnemyType.Pasivo ? Color.blue : AgresiveColor);
+        SetMaterialColor(enemyScripteable.Color);
     }
 
     // Update is called once per frame
@@ -34,30 +21,20 @@ public class EnemyController : MonoBehaviour
     {
         if (!hasExploded)
         {
-            bool isPasiveColor = GetMaterialColor() == PasiveColor;
 
-            if (enemyType == EnemyType.Pasivo)
-            {
-                // TODO: Movimiento por default, que vaya yendo y viniendo
-                OnRaycastHitFollowPlayer();
-
-                if (isPasiveColor)
-                {
-                    this.speed += Time.deltaTime;
-                }
-            }
-
-            if (enemyType == EnemyType.Agresivo || isPasiveColor)
-            {
+            if (enemyScripteable.EnemyType == EnemyType.Agresive || playerFound) {
                 FollowPlayer();
                 LookAtPlayerLerp();
+            } else if (enemyScripteable.EnemyType == EnemyType.Pasive && !playerFound) {
+                OnRaycastFindPlayer();
             }
+
         }
     }
 
     private void FollowPlayer()
     {
-        transform.position += speed * ((playerTransform.position - transform.position).normalized) * Time.deltaTime;
+        transform.position += enemyScripteable.Speed * ((playerTransform.position - transform.position).normalized) * Time.deltaTime;
     }
 
     private void LookAtPlayerLerp()
@@ -70,19 +47,14 @@ public class EnemyController : MonoBehaviour
         this.GetComponent<Renderer>().material.SetColor("_Color", newColor);
     }
 
-    private Color GetMaterialColor()
-    {
-        return this.GetComponent<Renderer>().material.GetColor("_Color");
-    }
-
-    private void OnRaycastHitFollowPlayer()
+    private void OnRaycastFindPlayer()
     {
         RaycastHit hit;
-        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, DistanceRay))
+        if (Physics.Raycast(transform.position, transform.TransformDirection(Vector3.forward), out hit, enemyScripteable.LookDistance))
         {
             if (hit.transform.tag == "Player")
             {
-                SetMaterialColor(Color.yellow);
+                playerFound = true;
             }
         }
     }
@@ -90,7 +62,7 @@ public class EnemyController : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.blue;
-        Vector3 direction = transform.TransformDirection(Vector3.forward) * DistanceRay;
+        Vector3 direction = transform.TransformDirection(Vector3.forward) * enemyScripteable.LookDistance;
         Gizmos.DrawRay(transform.position, direction);
     }
 
